@@ -24,10 +24,7 @@ volumes:
 
 services:
   fba_server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: fba_server:latest
+    image: ghcr.io/moi-igit/fastapi-demo:fba_server
     ports:
       - "${DOCKER_MAP_SERVER_PORT:-8001}:8001"
     container_name: fba_server
@@ -157,7 +154,7 @@ services:
 
   fba_rabbitmq:
     hostname: fba_rabbitmq
-    image: rabbitmq:3.13.7
+    image: rabbitmq:3-management
     ports:
       - "${DOCKER_MAP_RABBITMA_UI_PORT:-15672}:15672"
       - "${DOCKER_MAP_RABBITMA_PORT:-5672}:5672"
@@ -172,12 +169,7 @@ services:
       - fba_network
 
   fba_celery_worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SERVER_TYPE=fba_celery_worker
-    image: fba_celery_worker:latest
+    image: ghcr.io/moi-igit/fastapi-demo:fba_celery_worker
     # 如果你需要分布式部署 Worker，则必须移除此 container_name 配置
     container_name: fba_celery_worker
     restart: always
@@ -199,12 +191,7 @@ services:
         supervisorctl restart
 
   fba_celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SERVER_TYPE=fba_celery_beat
-    image: fba_celery_beat:latest
+    image: ghcr.io/moi-igit/fastapi-demo:fba_celery_beat
     container_name: fba_celery_beat
     restart: always
     environment:
@@ -226,12 +213,7 @@ services:
         supervisorctl restart
 
   fba_celery_flower:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SERVER_TYPE=fba_celery_flower
-    image: fba_celery_flower:latest
+    image: ghcr.io/moi-igit/fastapi-demo:fba_celery_flower
     ports:
       - "${DOCKER_MAP_CELERY_FLOWER_PORT:-8555}:8555"
     container_name: fba_celery_flower

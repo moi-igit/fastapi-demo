@@ -1,15 +1,50 @@
-name: Deploy
+name: Build and Deploy
 
 on:
   push:
     branches: [main]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        target:
+          - fba_server
+          - fba_celery_worker
+          - fba_celery_beat
+          - fba_celery_flower
+
     steps:
       - uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.target }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: SERVER_TYPE=${{ matrix.target }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}
+
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.2.1
         with:
@@ -19,4 +54,5 @@ jobs:
           script: |
             cd /opt/apps/fba-backend
             git pull origin main
-            docker compose up -d --build
+            docker compose pull
+            docker compose up -d
