@@ -53,6 +53,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd /opt/apps/fba-backend
-            git pull origin main
             docker compose pull
             docker compose up -d
