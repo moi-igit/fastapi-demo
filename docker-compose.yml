@@ -295,25 +295,26 @@ services:
       - --enable-feature=exemplar-storage
       - --config.file=/workspace/fba_prometheus.yml
 
-  fba_alloy:
-    image: grafana/alloy:latest
-    restart: always
-    ports:
-      - "${DOCKER_MAP_ALLOY_GRPC_PORT:-4317}:4317"
-      - "${DOCKER_MAP_ALLOY_HTTP_PORT:-4318}:4318"
-      - "${DOCKER_MAP_ALLOY_UI_PORT:-12345}:12345"
-    container_name: fba_alloy
-    depends_on:
-      - fba_loki
-      - fba_prometheus
-    volumes:
-      - ./deploy/backend/grafana/fba_config.alloy:/etc/alloy/fba_config.alloy
-    networks:
-      - fba_network
-    command:
-      - run
-      - --server.http.listen-addr=0.0.0.0:12345
-      - /etc/alloy/fba_config.alloy
+# Monitoring service - disabled due to image unavailability
+#  fba_alloy:
+#    image: grafana/alloy:latest
+#    restart: always
+#    ports:
+#      - "${DOCKER_MAP_ALLOY_GRPC_PORT:-4317}:4317"
+#      - "${DOCKER_MAP_ALLOY_HTTP_PORT:-4318}:4318"
+#      - "${DOCKER_MAP_ALLOY_UI_PORT:-12345}:12345"
+#    container_name: fba_alloy
+#    depends_on:
+#      - fba_loki
+#      - fba_prometheus
+#    volumes:
+#      - ./deploy/backend/grafana/fba_config.alloy:/etc/alloy/fba_config.alloy
+#    networks:
+#      - fba_network
+#    command:
+#      - run
+#      - --server.http.listen-addr=0.0.0.0:12345
+#      - /etc/alloy/fba_config.alloy
 
   fba_tempo:
     image: grafana/tempo:latest
