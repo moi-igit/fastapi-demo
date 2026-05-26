@@ -51,7 +51,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
+          command_timeout: 5m
           script: |
             cd /opt/apps/project-a
-            docker compose pull backend
-            docker compose up -d backend
+            timeout 180 docker compose pull backend 2>&1 || echo "pull timeout, using cached image"
+            docker compose up -d --force-recreate backend
