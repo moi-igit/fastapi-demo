@@ -261,6 +261,35 @@ docker logs --tail 50 project-a-db
 
 ---
 
+## 数据库连接信息
+
+| 项目 | 值 |
+|------|-----|
+| 容器名 | `project-a-db` |
+| 镜像 | `postgres:16` |
+| 数据库 | `fba` |
+| 用户 | `postgres` |
+| 密码 | `123456` |
+| 端口 | `5432`（容器内） |
+
+> ⚠️ 密码 `123456` 仅测试用，生产环境必须修改。
+
+### 连接方式
+
+```bash
+# 从服务器直接进入
+docker exec -it project-a-db psql -U postgres -d fba
+
+# 应用内连接（容器间）
+# Host: db  (docker-compose 服务名)
+# Port: 5432
+# User: postgres
+# Password: 123456
+# Database: fba
+```
+
+---
+
 ## 数据库操作
 
 ```bash
